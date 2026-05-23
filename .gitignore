@@ -1,0 +1,21 @@
+# General
+.idea/
+*.iml
+.DS_Store
+
+# Flutter/Dart
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+
+# Android
+*.apk
+*.aab
+*.keystore
+
+# iOS
+*.ipa

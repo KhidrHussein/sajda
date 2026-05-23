@@ -1,0 +1,68 @@
+buildscript {
+    ext.kotlin_version = '2.1.0'
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // This must match your Gradle version
+        classpath 'com.android.tools.build:gradle:8.6.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    // These values satisfy the requirements of older plugins
+    project.ext {
+        compileSdkVersion = 35
+        minSdkVersion = 21
+        targetSdkVersion = 35
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    // Standard build directory setup
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+
+    // Ensure all subprojects (plugins) have access to the same SDK versions
+    project.plugins.withId('com.android.library') {
+        project.extensions.configure('android') { ext ->
+            // Some plugins look for android.flutter
+            if (!ext.extensions.findByName('flutter')) {
+                ext.extensions.add('flutter', [
+                    compileSdkVersion: 35,
+                    targetSdkVersion: 35,
+                    minSdkVersion: 21,
+                    ndkVersion: "26.1.10909125"
+                ])
+            }
+            // Ensure compileSdkVersion is set if missing
+            try {
+                if (ext.compileSdkVersion == null) {
+                    ext.compileSdkVersion 35
+                }
+            } catch (Exception e) {
+                // Fallback for newer AGP
+                try {
+                    if (ext.compileSdk == null) {
+                        ext.compileSdk = 35
+                    }
+                } catch (Exception e2) {}
+            }
+        }
+    }
+
+    project.evaluationDependsOn(":app")
+}
+
+
+
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
