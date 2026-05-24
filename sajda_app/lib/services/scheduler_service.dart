@@ -141,6 +141,7 @@ class SchedulerService {
   }
 
   Future<void> _cancelAllAlarms() async {
+    if (!Platform.isAndroid) return;
     for (var i = 0; i < 10; i++) {
       await AndroidAlarmManager.cancel(i);
     }
