@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -26,7 +27,9 @@ void main() async {
   
   await NotificationService().initialize();
   await BillingService().initialize();
-  await AndroidAlarmManager.initialize();
+  if (Platform.isAndroid) {
+    await AndroidAlarmManager.initialize();
+  }
   await SchedulerService().start();
   runApp(const SajdaApp());
 }
