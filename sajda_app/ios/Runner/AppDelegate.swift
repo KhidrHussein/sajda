@@ -18,7 +18,7 @@ import DeviceActivity
       (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
       switch call.method {
       case "requestAuthorization":
-          if #available(iOS 15.0, *) {
+          if #available(iOS 16.0, *) {
               Task {
                   do {
                       try await AuthorizationCenter.shared.requestAuthorization(for: .individual)
@@ -28,7 +28,7 @@ import DeviceActivity
                   }
               }
           } else {
-              result(FlutterError(code: "UNSUPPORTED", message: "iOS 15.0 or higher required", details: nil))
+              result(FlutterError(code: "UNSUPPORTED", message: "iOS 16.0 or higher required", details: nil))
           }
       case "showFamilyPicker":
           // Note: Showing the picker usually requires a SwiftUI view.
