@@ -82,18 +82,20 @@ class SchedulerService {
         // 1. Schedule Adhan / Reminder at EXACT prayer time
         if (prayer.time.isAfter(now)) {
           final adhanAlarmId = prayer.name.index * 2;
-          await AndroidAlarmManager.oneShotAt(
-            prayer.time,
-            adhanAlarmId,
-            alarmCallback,
-            params: {
-              'prayerName': prayer.name.displayName,
-              'durationSeconds': lockDurationSeconds,
-              'playAdhan': playAdhan,
-            },
-            exact: true,
-            wakeup: true,
-          );
+          if (Platform.isAndroid) {
+            await AndroidAlarmManager.oneShotAt(
+              prayer.time,
+              adhanAlarmId,
+              alarmCallback,
+              params: {
+                'prayerName': prayer.name.displayName,
+                'durationSeconds': lockDurationSeconds,
+                'playAdhan': playAdhan,
+              },
+              exact: true,
+              wakeup: true,
+            );
+          }
           debugPrint('SAJDA_DEBUG: Adhan alarm for ${prayer.name.displayName} scheduled at ${prayer.time}');
         }
 
@@ -126,13 +128,15 @@ class SchedulerService {
       if (now.isAfter(nextRefresh)) {
         nextRefresh = nextRefresh.add(const Duration(days: 1));
       }
-      await AndroidAlarmManager.oneShotAt(
-        nextRefresh,
-        999, // Use 999 for daily refresh
-        dailyRefreshCallback,
-        exact: true,
-        wakeup: true,
-      );
+      if (Platform.isAndroid) {
+        await AndroidAlarmManager.oneShotAt(
+          nextRefresh,
+          999, // Use 999 for daily refresh
+          dailyRefreshCallback,
+          exact: true,
+          wakeup: true,
+        );
+      }
       debugPrint('SAJDA_DEBUG: Daily refresh alarm scheduled at $nextRefresh');
 
     } catch (e) {
